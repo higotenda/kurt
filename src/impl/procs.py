@@ -12,7 +12,8 @@ from io import BytesIO
 import re
 import infer
 from PIL import Image
-
+import impl.kf_proc
+import concurrent.futures
 
 class ImgProc(abcs.MultimediaProc):
     """
@@ -24,13 +25,18 @@ class ImgProc(abcs.MultimediaProc):
         genai.configure(api_key=os.environ["API_KEY"])
         self.model = genai.GenerativeModel("gemini-pro-vision")
 
+    def raw(self, fp:str):
+        img = Image.open(fp).convert("RGB")
+        return ''.join(p.text for p in self.model.generate_content([self.sys_prompt, img]).candidates[0].content.parts)
+
     def consume(self, url: str):
         response = requests.get(url)
         img = Image.open(BytesIO(response.content)).convert("RGB")
-        return f"##<img url='{url}'>##{''.join(p.text for p in self.model.generate_content([self.sys_prompt, img]).candidates[0].content.parts)}##</img>##"
+        desc = ''.join(p.text for p in self.model.generate_content([self.sys_prompt, img]).candidates[0].content.parts)
+        return f"##<img url='{url}'>##{desc}##</img>##"
 
 
-class YoutubeProc(abcs.MultimediaProc):
+class YoutubeProcAction(abcs.MultimediaProc):
     def consume(self, url: str):
         # return "##<video>## Video is currently unavailable ##</video>##"
         stost = lambda s: f"{s//60:02}:{s%60:02}"
@@ -40,10 +46,29 @@ class YoutubeProc(abcs.MultimediaProc):
         )
         f"##<video url='{url}'>##{a}##</video>##"
 
+class YoutubeProcKF(abcs.MultimediaProc):
+    def consume(self, url: str):
+        chunk_dir = "output"
+        impl.kf_proc.download_url(url)
+        ip = ImgProc()
+        ret = f"##<video url='{url}'##"
+        # with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+        #     futures = {}
+        #     for i, kf in enumerate(os.listdir(chunk_dir)):
+        #         if os.path.isfile(os.path.join(chunk_dir, kf)):
+        #             futures[i] = executor.submit(ip.raw, f'{chunk_dir}/{kf}')
+        #     results = {i: t.result() for i, t in futures.items()}
+        # for i,_ in enumerate(os.listdir(chunk_dir)):
+        #     ret += f'Keyframe {i}: {results[i]}'
+        for i, kf in enumerate(os.listdir(chunk_dir)):
+            if os.path.isfile(os.path.join(chunk_dir, kf)):
+                print(f"Processing {i}")
+                ret += f'Keyframe {i}: {ip.raw(f"{chunk_dir}/{kf}")}'
+    
+        return ret+'##</video>##'
 
 class WebpageProc(abcs.MultimediaProc):
     def consume(self, url: str):
-        # return "##<article>## Articles are currently unvailable ##</article>##"
         response = requests.get(url)
         html_content = response.text
         soup = BeautifulSoup(html_content, "html.parser")
@@ -70,7 +95,7 @@ class ProcMux(abcs.MultimediaProc):
         for l in re.findall(
             r"(?P<url>https?://www\.youtube\.com/watch\?v=[\w-]+)", url
         ):
-            yp = YoutubeProc()
+            yp = YoutubeProcKF()
             return yp.consume(l)
 
         # Default proc is web-page proc.

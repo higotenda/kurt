@@ -6,6 +6,7 @@ from textprot import FileStorage, DummyActor, DummyProc
 from impl.procs import ProcMux
 from impl.mongoc import MongoProvider
 from impl.actor import GeminiActor
+from impl.redisc import RedisProvider
 from impl.procs import ProcMux
 import json
 
@@ -15,10 +16,11 @@ with open("./config.json", "r") as fh:
 
 LLM_ACTOR_MAP = {"GeminiActor": GeminiActor, "DummyActor": DummyActor}
 
-PROVIDER_MAP = { "MongoDB": MongoProvider, 
-				"FileStorage": FileStorage,
-				"Redis": RedisProvider
-				};
+PROVIDER_MAP = {
+    "MongoDB": MongoProvider,
+    "FileStorage": FileStorage,
+    "Redis": RedisProvider,
+}
 
 PROCESSOR_MAP = {"DummyProc": DummyProc, "ProcMux": ProcMux}
 
