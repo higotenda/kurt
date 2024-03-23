@@ -31,6 +31,5 @@ def process_video(url: str) -> List[str]:
                 labeled_video.append((labels[score_sorted[0][0]]))
         return labeled_video
 
-
 if __name__ == "__main__":
     process_video("http://youtube.com/watch?v=9bZkp7q19f0")

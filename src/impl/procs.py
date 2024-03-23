@@ -11,6 +11,7 @@ import requests
 from io import BytesIO
 import re
 import infer
+from impl.ocr import ocr_string
 from PIL import Image
 
 class ImgProc(abcs.MultimediaProc):
@@ -25,7 +26,9 @@ class ImgProc(abcs.MultimediaProc):
     def consume(self, url: str):
         response = requests.get(url)
         img = Image.open(BytesIO(response.content)).convert('RGB')
-        return f"##<img url='{url}'>##{''.join(p.text for p in self.model.generate_content([self.sys_prompt, img]).candidates[0].content.parts)}##</img>##"
+        a = ''.join(p.text for p in self.model.generate_content([self.sys_prompt, img]).candidates[0].content.parts);
+        ocr_output = ocr_string(img); print("ocr_output: ", ocr_output);
+        return f"##<img url='{url}'>##{a}##</img>## seemingly containing the text: \'{ocr_output}\'";
 
 class YoutubeProc(abcs.MultimediaProc):
     def consume(self, url: str):
