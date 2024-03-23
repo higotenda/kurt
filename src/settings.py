@@ -10,19 +10,33 @@ from impl.procs import ProcMux
 from impl.redisc import RedisProvider
 import json
 
+LLM_ACTOR_MAP = {
+	"GeminiActor": GeminiActor,
+	"DummyActor": DummyActor
+};
+
+PROVIDER_MAP = { 
+	"MongoDB": MongoProvider, 
+	"FileStorage": FileStorage,
+	"Redis": RedisProvider
+};
+
+PROCESSOR_MAP = {
+	"DummyProc": DummyProc, 
+	"ProcMux": ProcMux
+};
+
 SETTINGS = None
 with open("./config.json", "r") as fh:
     SETTINGS = json.load(fh)
+SETTINGS["Provider"]  = PROVIDER_MAP[SETTINGS["Provider"]]  (SETTINGS["PRVARG"]);
 
-LLM_ACTOR_MAP = {"GeminiActor": GeminiActor, "DummyActor": DummyActor}
+class Preferences:
+	def __init__(self, serjson):
+		data = json.loads(serjson);
+		self.history_limit = data['history_limit'];
+		self.LLM_Actor = LLM_ACTOR_MAP[data["LLM_Actor"]](data["API_KEY"]);
+		self.Processor = PROCESSOR_MAP[data['Processor']](data["API_KEY"]);
+		self.TOKEN = data['token'];
 
-PROVIDER_MAP = { "MongoDB": MongoProvider, 
-				"FileStorage": FileStorage,
-				"Redis": RedisProvider
-				};
-
-PROCESSOR_MAP = {"DummyProc": DummyProc, "ProcMux": ProcMux}
-
-SETTINGS["LLM_Actor"] = LLM_ACTOR_MAP[SETTINGS["LLM_Actor"]](SETTINGS["ACTARG"])
-SETTINGS["Provider"]  = PROVIDER_MAP[SETTINGS["Provider"]](SETTINGS["PRVARG"])
-SETTINGS["Processor"] = PROCESSOR_MAP[SETTINGS["Processor"]](SETTINGS["ACTARG"])
+GLOBAL_PREFS = Preferences(SETTINGS["Provider"].fetch("#prefs"));

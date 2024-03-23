@@ -3,16 +3,20 @@ A module to connect to redis.
 """
 
 import abcs
+import redis
 
 class RedisProvider(abcs.DataProvider):
 	def __init__(self, host):
-		self.r = redis.Redis(host=host, decode_responses=True);
+		host, _, port = host.partition(':');
+		port = int(port);
+		self.r = redis.Redis(host=host, port=port, decode_responses=True);
 
 	def write(self, media_str, data):
-        return self.r.set(media_str, data);
+		print("Writing to db " + media_str);
+		return self.r.set(media_str, data);
 
-    def fetch(self, media_id:str):
-        return self.r.get(media_id);
+	def fetch(self, media_id: str):
+		return self.r.get(media_id);
 
-    def terminate(self):
-        self.r.close()
+	def terminate(self):
+		self.r.close()

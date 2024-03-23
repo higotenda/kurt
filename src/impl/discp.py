@@ -11,9 +11,9 @@ from threading import Thread
 import textprot
 import asyncio
 
-from settings import SETTINGS
+from settings import GLOBAL_PREFS, SETTINGS
 
-DISCORD_BOT_TOKEN = SETTINGS["token"]
+DISCORD_BOT_TOKEN = GLOBAL_PREFS.TOKEN
 client = None
 
 def stripid_msg(msg, is_dm, split=False):
@@ -38,7 +38,7 @@ async def on_message(message):
         texts = [];
 
         if len(trail.strip()) == 0:
-            async for message in channel.history(limit=SETTINGS['history_limit']):
+            async for message in channel.history(limit=GLOBAL_PREFS.history_limit):
                 if message.author == client.user:
                     continue;
                 content = stripid_msg(message.content, is_dm);
@@ -51,11 +51,11 @@ async def on_message(message):
             texts.append(trail);
             await channel.send("Summarizing trail: " + trail);
 
-        eater = Eater(channel, texts, (SETTINGS['Provider'], SETTINGS['Processor'], SETTINGS['LLM_Actor']));
+        eater = Eater(channel, texts, (SETTINGS['Provider'], GLOBAL_PREFS.Processor, GLOBAL_PREFS.LLM_Actor));
         await eater.do_it();
 
     elif command == '/interrogate' or command == '/?':
-        response = SETTINGS['LLM_Actor'].send_prompt(trail);
+        response = GLOBAL_PREFS.LLM_Actor.send_prompt(trail);
         await channel.send(response[:2000]);
 
 
