@@ -25,10 +25,12 @@ def download_url(url: str, chunk_dir="output") -> None:
         "copy",
         "-map",
         "0",
-        "-segment_time",
-        "5",
         "-f",
         "segment",
+        "-segment_time",
+        "5",
+        "-reset_timestamps",
+        "1",
         output_pattern,
     ]
 

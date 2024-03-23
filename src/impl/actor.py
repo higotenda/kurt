@@ -59,9 +59,10 @@ alright
 
     def send_base(self, text_data, ser_data):
         self.history.append({"role": "user", "parts": text_data + ser_data})
+        print(self.history);
         response = self.model.generate_content(self.history)
         self.history.append(response.candidates[0].content)
-        return ''.join(p.text for p in response.candidates[0].content.parts)
+        return ''.join(p.text for p in response.candidates[0].content.parts).strip()
 
     def send_prompt(self, text_data):
         self.history.append(
@@ -70,10 +71,10 @@ alright
                 "parts": ["Answer this question from the previous chat", text_data],
             }
         )
+        print(self.history);
         response = self.model.generate_content(self.history)
-        print(response.__dir__)
         self.history.append(response.candidates[0].content)
-        return ''.join(p.text for p in response.candidates[0].content.parts)
+        return ''.join(p.text for p in response.candidates[0].content.parts).strip()
 
     def clean(self):
         self.history = self.history_default.copy()
