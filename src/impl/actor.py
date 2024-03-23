@@ -59,12 +59,11 @@ alright
 
     def send_base(self, text_data, ser_data):
         self.history.append({"role": "user", "parts": text_data + ser_data})
-        print(self.history)
         response = self.model.generate_content(self.history)
-        if not len(response.candidates)>0:
-            return f'Cannot generate response due to safety reasons. {response.prompt_feedback}'
+        if not len(response.candidates) > 0:
+            return f"Cannot generate response due to safety reasons. {response.prompt_feedback}"
         self.history.append(response.candidates[0].content)
-        return ''.join(p.text for p in response.candidates[0].content.parts)
+        return "".join(p.text for p in response.candidates[0].content.parts)
 
     def send_prompt(self, text_data):
         self.history.append(
@@ -74,9 +73,8 @@ alright
             }
         )
         response = self.model.generate_content(self.history)
-        print(response.__dir__)
         self.history.append(response.candidates[0].content)
-        return ''.join(p.text for p in response.candidates[0].content.parts)
+        return "".join(p.text for p in response.candidates[0].content.parts)
 
     def clean(self):
         self.history = self.history_default.copy()

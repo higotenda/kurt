@@ -4,12 +4,10 @@ A module to load config.json.
 
 from textprot import FileStorage, DummyActor, DummyProc
 from impl.procs import ProcMux
-# from impl.mongoc import MongoProvider
+from impl.mongoc import MongoProvider
 from impl.actor import GeminiActor
 from impl.procs import ProcMux
 import json
-
-MongoProvider = None
 
 SETTINGS = None
 with open("./config.json", "r") as fh:

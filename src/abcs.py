@@ -77,12 +77,18 @@ def kurt_eat(
     text, links = env.hist()
     mm_data = []
     for link in links:
-        ret = prov.fetch(link)
-        ret = ""
-        if ret is None or "":
+        ret = None
+        try:
+            ret = prov.fetch(link)
+        except:
+            print("Mongo is dead")
+        if ret is None:
             ret = proc.consume(link)
-            if not prov.write(link, ret):
-                print(f"Warning: Failed to cache result for link {link}")
+            try:
+                if not prov.write(link, ret):
+                    print(f"Warning: Failed to cache result for link {link}")
+            except:
+                print("Mongo is dead")
         mm_data.append(ret)
         mm_data = list(filter(lambda x: x is not None, mm_data))
     return actor.send_base(text, mm_data)
