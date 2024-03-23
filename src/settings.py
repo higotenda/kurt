@@ -4,7 +4,7 @@ A module to load config.json.
 
 from textprot import FileStorage, DummyActor, DummyProc
 from impl.mongoc import MongoProvider
-from actor import GeminiActor
+from impl.actor import GeminiActor
 import json
 
 SETTINGS = None;

@@ -4,7 +4,7 @@ A module to implement a CLI session to prototype..
 
 import abcs
 import pickle
-import actor
+import impl.actor as actor
 
 
 class ConsoleEnv(abcs.TextEnv):

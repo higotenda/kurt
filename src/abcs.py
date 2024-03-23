@@ -60,6 +60,10 @@ class LLMActor(ABC):
         """Get prompt results."""
         pass
 
+    def clean(self) -> None:
+        """Clear Context"""
+        pass
+
 
 def regex_url(search_str: str) -> list[Link]:
     """Search input string for links."""

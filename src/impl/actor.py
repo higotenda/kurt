@@ -9,7 +9,7 @@ class GeminiActor(abcs.LLMActor):
     def __init__(self, key) -> None:
         genai.configure(api_key=key)
         self.model = genai.GenerativeModel("gemini-pro")
-        self.history = [
+        self.history_default = [
             {
                 "role": "user",
                 "parts": [sys_prompt],
@@ -55,9 +55,10 @@ alright
                 ],
             },
         ]
+        self.history = self.history_default.copy()
 
     def send_base(self, text_data, ser_data):
-        self.history.append({"role": "user", "parts": text_data+ser_data})
+        self.history.append({"role": "user", "parts": text_data + ser_data})
         response = self.model.generate_content(self.history)
         self.history.append(response.candidates[0].content)
         return response.candidates[0].content
@@ -72,3 +73,6 @@ alright
         response = self.model.generate_content(self.history)
         self.history.append(response.candidates[0].content)
         return response.candidates[0].content
+
+    def clean(self):
+        self.history = self.history_default.copy()

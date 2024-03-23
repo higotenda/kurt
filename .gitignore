@@ -168,4 +168,6 @@ test.ipynb
 
 *.pth
 
-input.jpg
+src/input.jpg
+
+disc2.py
