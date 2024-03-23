@@ -17,41 +17,46 @@ DISCORD_BOT_TOKEN = SETTINGS["token"]
 client = None
 
 
-class DiscordBot:
-    async def on_ready(self):
-        print("I have logged in as {0.user}".format(client))
+def stripid_msg(msg, is_dm, split=False):
+    first, _, last = msg.partition(' ');
+    if not is_dm:
+        first, _, last = last.partition(' ');
+    return (first, last) if split else last;
 
-    async def on_message(self, message):
-        if message.author == client.user:
-            return
+async def on_ready():
+  print("I have logged in as {0.user}".format(client))
 
-        msg = message.content
-        channel = message.channel
-        is_dm = isinstance(channel, discord.channel.DMChannel)
+async def on_message(message):
+    if message.author == client.user:
+        return
 
-        tok = msg.split(" ")
-        tok = tok if is_dm else tok[1:]
-        tok.append("")
+    channel = message.channel;
+    is_dm = isinstance(message.channel, discord.channel.DMChannel);
+    command, trail = stripid_msg(message.content, is_dm, split=True);
 
-        if tok[0] == "/summarize":
-            texts = []
-            async for message in channel.history(limit=SETTINGS["history_limit"]):
-                content = (
-                    message.content
-                    if is_dm
-                    else message.content.partition(">")[-1].strip()
-                )
-                if content.strip() == "":
-                    continue
-                    # Just filter blanks out.
-                texts.append(message.author.name + " : " + content)
-            await channel.send("Summarizing current: " + channel.name)
-            eater = Eater(
-                channel,
-                texts,
-                (SETTINGS["Provider"], SETTINGS["Processor"], SETTINGS["LLM_Actor"]),
-            )
-            await eater.do_it()
+    if command == '/summary' or command == '/.':
+
+        texts = [];
+
+        if len(trail.strip()) == 0:
+            async for message in channel.history(limit=SETTINGS['history_limit']):
+                if message.author == client.user:
+                    continue;
+                content = stripid_msg(message.content, is_dm);
+                if content.strip() == '':
+                    continue;   # Just filter blanks out.
+                texts.append(message.author.name + " : " + content);
+            await channel.send("Summarizing current: " + channel.name);
+            texts = texts[::-1];
+        else:
+            texts.append(trail);
+            await channel.send("Summarizing trail: " + trail);
+
+        eater = Eater(channel, texts, (SETTINGS['Provider'], SETTINGS['Processor'], SETTINGS['LLM_Actor']));
+        await eater.do_it();
+
+    elif command == '/interrogate' or command == '/?':
+        SETTINGS['LLM_Actor'].send_prompt(trail);
 
 
 class Eater(abcs.TextEnv):
@@ -79,7 +84,6 @@ def make_client():
 
     global client
     client = discord.Client(intents=intents)
-    bot = DiscordBot()
-    client.event(bot.on_ready)
-    client.event(bot.on_message)
-    return (bot, client)
+    client.event(on_ready);
+    client.event(on_message);
+    return client;
