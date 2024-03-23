@@ -5,6 +5,7 @@ A module to load config.json.
 from textprot import FileStorage, DummyActor, DummyProc
 from impl.mongoc import MongoProvider
 from impl.actor import GeminiActor
+from impl.procs import ProcMux
 import json
 
 SETTINGS = None;
@@ -22,7 +23,8 @@ PROVIDER_MAP = {
 };
 
 PROCESSOR_MAP = {
-	'DummyProc': DummyProc
+	'DummyProc': DummyProc,
+	'ProcMux': ProcMux
 };
 
 SETTINGS['LLM_Actor']= LLM_ACTOR_MAP[SETTINGS['LLM_Actor']](SETTINGS['ACTARG']);
