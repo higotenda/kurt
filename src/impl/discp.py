@@ -16,6 +16,11 @@ from settings import SETTINGS
 DISCORD_BOT_TOKEN = SETTINGS["token"]
 client = None
 
+def stripid_msg(msg, is_dm, split=False):
+    first, _, last = msg.partition(' ');
+    if not is_dm:
+        first, _, last = last.partition(' ');
+    return (first, last) if split else last;
 
 def stripid_msg(msg, is_dm, split=False):
     first, _, last = msg.partition(" ")
@@ -81,7 +86,7 @@ class Eater(abcs.TextEnv):
 
     async def do_it(self):
         response = abcs.kurt_eat(self, *self.fwd_tup)
-        await self.channel.send(response)
+        await self.channel.send(response[:2000])
 
 
 def make_client():
