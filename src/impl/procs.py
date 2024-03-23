@@ -23,11 +23,13 @@ class ImgProc(abcs.MultimediaProc):
 
 class YoutubeProc(abcs.MultimediaProc):
     def consume(self, url: str):
+        return "##<video>## Video is currently unavailable ##</video>##"
         stost = lambda s: f"{s//60:02}:{s%60:02}"
-        f"##<video url='{url}'>##{'\n'.join(f'{stost(i*5)}: {action}' for i,action in enumerate(infer.process_video(url)))}##</video>##"
+        return f"##<video url='{url}'>##{' '.join(f'{stost(i*5)}: {action}' for i,action in enumerate(infer.process_video(url)))}##</video>##"
 
 class WebpageProc(abcs.MultimediaProc):
     def consume(self, url: str):
+        return "##<article>## Articles are currently unvailable ##</article>##"
         response = requests.get(url)
         html_content = response.text
         soup = BeautifulSoup(html_content, 'html.parser')
@@ -37,6 +39,8 @@ class WebpageProc(abcs.MultimediaProc):
 class ProcMux(abcs.MultimediaProc):
     def consume(self, url: str):
         response = requests.head(url)
+        if response.status_code!=200:
+            return "##<generic>## The url failed to load ##</generic>##"
         mime_type = response.headers.get("Content-Type")
 
         if mime_type.startswith("image/"):

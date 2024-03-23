@@ -77,6 +77,7 @@ def kurt_eat(
     mm_data = []
     for link in links:
         ret = prov.fetch(link)
+        ret = None
         if ret is None:
             ret = proc.consume(link)
             if not prov.write(link, ret):
