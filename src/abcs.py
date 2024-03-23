@@ -1,6 +1,9 @@
 from abc import ABC
 from typing import NewType, abstractmethod
 import re
+import logging
+
+logger = logging.getLogger(__name__)
 
 Link = NewType("Link", str)
 JsonData = NewType("JsonData", str)
@@ -84,6 +87,8 @@ def kurt_eat(
             print("Mongo is dead")
         if ret is None:
             ret = proc.consume(link)
+            if ret=='':
+                logger.warn("Processor returned empty")
             try:
                 if not prov.write(link, ret):
                     print(f"Warning: Failed to cache result for link {link}")
