@@ -36,11 +36,12 @@ class YoutubeProc(abcs.MultimediaProc):
 
 class WebpageProc(abcs.MultimediaProc):
     def consume(self, url: str):
-        return "##<article>## Articles are currently unvailable ##</article>##"
+        # return "##<article>## Articles are currently unvailable ##</article>##"
         response = requests.get(url)
         html_content = response.text
         soup = BeautifulSoup(html_content, 'html.parser')
         text = soup.get_text()
+        print(text)
         f"##<article>##{text}##</article>"
 
 class ProcMux(abcs.MultimediaProc):
@@ -50,7 +51,7 @@ class ProcMux(abcs.MultimediaProc):
     def consume(self, url: str):
         response = requests.head(url)
         if response.status_code!=200:
-            return "##<generic>## The url failed to load ##</generic>##"
+            return "##<generic>## The url failed to load ignore this and continue to look at chat##</generic>##"
         mime_type = response.headers.get("Content-Type")
 
         if mime_type.startswith("image/"):
