@@ -71,6 +71,7 @@ alright
             }
         )
         response = self.model.generate_content(self.history)
+        print(response.__dir__)
         self.history.append(response.candidates[0].content)
         return ''.join(p.text for p in response.candidates[0].content.parts)
 
