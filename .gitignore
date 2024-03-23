@@ -162,3 +162,5 @@ cython_debug/
 *.mp4
 
 dump.bin
+
+test.py
