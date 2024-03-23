@@ -11,7 +11,7 @@ class TextEnv(ABC):
 		pass
 
 	@abstractmethod
-	def hist(*kwargs) -> tuple[list[str], list[Link]]:
+	def hist(self) -> tuple[list[str], list[Link]]:
 		"""Return a history of everything that's transpired in the chat. Kwargs can be used to supply additional arguments."""
 		pass
 
