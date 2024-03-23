@@ -1,4 +1,6 @@
+import requests
 import google.generativeai as genai
+from bs4 import BeautifulSoup
 import abcs
 import os
 import requests
@@ -24,16 +26,24 @@ class YoutubeProc(abcs.MultimediaProc):
         stost = lambda s: f"{s//60:02}:{s%60:02}"
         f"##<video url='{url}'>##{'\n'.join(f'{stost(i*5)}: {action}' for i,action in enumerate(infer.process_video(url)))}##</video>##"
 
+class WebpageProc(abcs.MultimediaProc):
+    def consume(self, url: str):
+        response = requests.get(url)
+        html_content = response.text
+        soup = BeautifulSoup(html_content, 'html.parser')
+        text = soup.get_text()
+        f"##<article>##{text}##</article>"
+
 class ProcMux(abcs.MultimediaProc):
     def consume(self, url: str):
         response = requests.head(url)
         mime_type = response.headers.get("Content-Type")
 
         if mime_type.startswith("image/"):
-            return ImgProc.consume(url)
+            ip = ImgProc()
+            return ip.consume(url)
         for l in re.findall(r"(?P<url>https?://www\.youtube\.com/watch\?v=[\w-]+)", url):
-            return YoutubeProc
-        
-        
-
-        return 'A link to a webpage which is inaccessible'
+            yp = YoutubeProc()
+            return yp.consume(l)
+        wp = WebpageProc()
+        return wp.consume(url)
