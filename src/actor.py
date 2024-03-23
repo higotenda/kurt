@@ -6,8 +6,8 @@ sys_prompt = "System prompt: You are currently summarizing the contents of a cha
 
 
 class GeminiActor(abcs.LLMActor):
-    def __init__(self) -> None:
-        genai.configure(api_key=os.environ["API_KEY"])
+    def __init__(self, key) -> None:
+        genai.configure(api_key=key)
         self.model = genai.GenerativeModel("gemini-pro")
         self.history = [
             {
