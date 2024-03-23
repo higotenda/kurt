@@ -73,7 +73,7 @@ def regex_url(search_str: str) -> list[Link]:
 def kurt_eat(
     env: TextEnv, prov: DataProvider, proc: MultimediaProc, actor: LLMActor
 ) -> str:
-    actor.clean();
+    actor.clean()
     text, links = env.hist()
     mm_data = []
     for link in links:

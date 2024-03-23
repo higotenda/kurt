@@ -18,14 +18,13 @@ class ImgProc(abcs.MultimediaProc):
     Processor for image-type multi-media.
     """
     def __init__(self) -> None:
-        self.ys_prompt = "What is in this image? Describe it to a person who is blind."
+        self.sys_prompt = "What is in this image? Describe it to a person who is blind."
         genai.configure(api_key=os.environ["API_KEY"])
         self.model = genai.GenerativeModel("gemini-pro-vision")
     
     def consume(self, url: str):
         response = requests.get(url)
-        img = Image.open(BytesIO(response.content))
-        ''.join(p.text for p in response.candidates[0].content.parts)
+        img = Image.open(BytesIO(response.content)).convert('RGB')
         return f"##<img url='{url}'>##{''.join(p.text for p in self.model.generate_content([self.sys_prompt, img]).candidates[0].content.parts)}##</img>##"
 
 class YoutubeProc(abcs.MultimediaProc):
