@@ -28,7 +28,7 @@ def process_video(url: str) -> List[str]:
                 score_tuples = tuple(zip(range(len(pred_scores)), pred_scores))
                 score_sorted = sorted(score_tuples, key=itemgetter(1), reverse=True)
 
-                labeled_video.append((labels[score_sorted[0]]))
+                labeled_video.append((labels[score_sorted[0][0]]))
         return labeled_video
 
 
