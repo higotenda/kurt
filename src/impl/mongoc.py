@@ -2,7 +2,7 @@ from pymongo import MongoClient
 import abcs
 
 class MongoProvider(abcs.DataProvider):
-    def _init_(self, url):
+    def __init__(self, url):
         self.client = MongoClient(url)
         self.mydb = self.client["Acedia"]
         self.mycollection = self.mydb["Kurt"]
