@@ -61,9 +61,14 @@ alright
         response = self.model.generate_content(self.history)
         self.history.append(response.candidates[0].content)
         return response.candidates[0].content
-    
+
     def send_prompt(self, text_data):
-        self.history.append({"role": "user", "parts": ["Answer this question from the previous chat", text_data]})
+        self.history.append(
+            {
+                "role": "user",
+                "parts": ["Answer this question from the previous chat", text_data],
+            }
+        )
         response = self.model.generate_content(self.history)
         self.history.append(response.candidates[0].content)
         return response.candidates[0].content

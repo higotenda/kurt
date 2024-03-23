@@ -10,11 +10,10 @@ checkpoint_file = (
 )
 label_file = "label_map_k400.txt"
 device = "cuda:0" if torch.cuda.is_available() else "cpu"
-model = init_recognizer(
-    config_file, checkpoint_file, device=device
-)
+model = init_recognizer(config_file, checkpoint_file, device=device)
 labels = open(label_file).readlines()
 labels = [x.strip() for x in labels]
+
 
 def process_image(img_path) -> None:
     pred_result = inference_recognizer(model, img_path)
@@ -29,6 +28,7 @@ def process_image(img_path) -> None:
     print("The top-5 labels with corresponding scores are:")
     for result in results:
         print(f"{result[0]}: ", result[1])
+
 
 def process_video() -> None:
     chunk_dir = "output"
@@ -50,5 +50,6 @@ def process_video() -> None:
             for result in results:
                 print(f"{result[0]}: ", result[1])
 
-if __name__=='__main__':
-    process_image('./input.jpg')
+
+if __name__ == "__main__":
+    process_image("./input.jpg")

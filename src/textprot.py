@@ -6,6 +6,7 @@ import abcs
 import pickle
 import actor
 
+
 class ConsoleEnv(abcs.TextEnv):
     def __init__(self, prompt=">", maxlen=100):
         self.prompt = prompt
@@ -22,7 +23,7 @@ class ConsoleEnv(abcs.TextEnv):
                 print(abcs.kurt_eat(self, prov, proc, llmac))
                 kurt_init = True
             elif line.startswith("kurtq") and kurt_init:
-                print(abcs.kurt_interrogate(line[len("kurtq "):], llmac))
+                print(abcs.kurt_interrogate(line[len("kurtq ") :], llmac))
             else:
                 self.inplist.append(line)
                 if len(self.inplist) > self.maxlen:
