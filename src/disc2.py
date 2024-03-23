@@ -27,6 +27,8 @@ async def on_ready():
 channels = {}
 
 
+channels = {}
+
 @client.event
 async def on_message(message):
 

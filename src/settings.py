@@ -15,7 +15,10 @@ with open("./config.json", "r") as fh:
 
 LLM_ACTOR_MAP = {"GeminiActor": GeminiActor, "DummyActor": DummyActor}
 
-PROVIDER_MAP = {"MongoDB": MongoProvider, "FileStorage": FileStorage}
+PROVIDER_MAP = { "MongoDB": MongoProvider, 
+				"FileStorage": FileStorage,
+				"Redis": RedisProvider
+				};
 
 PROCESSOR_MAP = {"DummyProc": DummyProc, "ProcMux": ProcMux}
 

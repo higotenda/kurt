@@ -11,7 +11,7 @@ Serialized = JsonData
 class TextEnv(ABC):
     def __init__(self):
         pass
-
+      
     @abstractmethod
     def hist(*kwargs) -> tuple[list[str], list[Link]]:
         """Return a history of everything that's transpired in the chat. Kwargs can be used to supply additional arguments."""
@@ -77,12 +77,18 @@ def kurt_eat(
     text, links = env.hist()
     mm_data = []
     for link in links:
+<<<<<<< HEAD
         ret = None
         try:
             ret = prov.fetch(link)
         except:
             print("Mongo is dead")
         if ret is None:
+=======
+        ret = prov.fetch(link)
+        ret = ""
+        if ret is None or "":
+>>>>>>> c38643d8b1aee0dd60ee16762b68080badc911ff
             ret = proc.consume(link)
             try:
                 if not prov.write(link, ret):
