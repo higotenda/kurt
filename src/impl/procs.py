@@ -1,3 +1,7 @@
+"""
+A module to implement various multimedia processors.
+"""
+
 import requests
 import google.generativeai as genai
 from bs4 import BeautifulSoup
@@ -10,6 +14,9 @@ import infer
 from PIL import Image
 
 class ImgProc(abcs.MultimediaProc):
+    """
+    Processor for image-type multi-media.
+    """
     def __init__(self) -> None:
         self.ys_prompt = "What is in this image? Describe it to a person who is blind."
         genai.configure(api_key=os.environ["API_KEY"])
@@ -25,7 +32,8 @@ class YoutubeProc(abcs.MultimediaProc):
     def consume(self, url: str):
         return "##<video>## Video is currently unavailable ##</video>##"
         stost = lambda s: f"{s//60:02}:{s%60:02}"
-        return f"##<video url='{url}'>##{' '.join(f'{stost(i*5)}: {action}' for i,action in enumerate(infer.process_video(url)))}##</video>##"
+        a = '\n'.join(f'{stost(i*5)}: {action}' for i,action in enumerate(infer.process_video(url)));
+        f"##<video url='{url}'>##{a}##</video>##"
 
 class WebpageProc(abcs.MultimediaProc):
     def consume(self, url: str):
@@ -37,6 +45,9 @@ class WebpageProc(abcs.MultimediaProc):
         f"##<article>##{text}##</article>"
 
 class ProcMux(abcs.MultimediaProc):
+    """
+    A processor that multiplexes other processors.
+    """
     def consume(self, url: str):
         response = requests.head(url)
         if response.status_code!=200:
@@ -49,5 +60,7 @@ class ProcMux(abcs.MultimediaProc):
         for l in re.findall(r"(?P<url>https?://www\.youtube\.com/watch\?v=[\w-]+)", url):
             yp = YoutubeProc()
             return yp.consume(l)
+
+        # Default proc is web-page proc.
         wp = WebpageProc()
         return wp.consume(url)
