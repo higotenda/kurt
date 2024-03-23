@@ -18,7 +18,7 @@ class ConsoleEnv(abcs.TextEnv):
             if line == "quit":
                 break
             elif line == "kurt":
-                print(abcs.kurt_init(self, prov, proc, llmac))
+                print(abcs.kurt_eat(self, prov, proc, llmac))
             else:
                 self.inplist.append(line)
                 if len(self.inplist) > self.maxlen:

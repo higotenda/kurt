@@ -3,8 +3,8 @@ import subprocess
 import os
 
 
-def demo():
-    yt = YouTube("http://youtube.com/watch?v=9bZkp7q19f0")
+def download_url(url: str) -> None:
+    yt = YouTube(url)
     yt.streams.filter(progressive=True, file_extension="mp4").order_by(
         "resolution"
     ).asc().first().download(filename="input.mp4")
@@ -31,6 +31,10 @@ def demo():
     ]
 
     subprocess.run(command)
+
+
+def demo():
+    download_url("http://youtube.com/watch?v=9bZkp7q19f0")
 
 
 if __name__ == "__main__":
