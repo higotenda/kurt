@@ -78,12 +78,13 @@ def kurt_eat(
     mm_data = []
     for link in links:
         ret = prov.fetch(link)
-        ret = None
-        if ret is None:
+        ret = ""
+        if ret is None or "":
             ret = proc.consume(link)
             if not prov.write(link, ret):
                 print(f"Warning: Failed to cache result for link {link}")
         mm_data.append(ret)
+        mm_data = list(filter(lambda x: x is not None, mm_data))
     return actor.send_base(text, mm_data)
 
 
