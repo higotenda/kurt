@@ -34,8 +34,7 @@ class ConsoleEnv(abcs.TextEnv):
         for line in self.inplist:
             links.extend(abcs.regex_url(line))
         return (self.inplist, links)
-
-
+      
 class FileStorage(abcs.DataProvider):
     def __init__(self, fpath):
         self.fh = open(fpath, "rb+")
