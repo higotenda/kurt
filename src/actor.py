@@ -2,7 +2,7 @@ import google.generativeai as genai
 import abcs
 import os
 
-sys_prompt = "System prompt: You are currently summarizing the contents of a chat history between a group of people. Your job is to read the messages which are sent and then write a summary of all that happened in that chat."
+sys_prompt = "System prompt: You are currently summarizing the contents of a chat history between a group of people. Your job is to read the messages which are sent and then write a summary of all that happened in that chat. Some of the messages will be interleaved with data of different types and you will be provided only a text description of the image, and image will be marked by ##<img url='url of image'>## Description of image ##</img>## use this description for additional context."
 
 
 class GeminiActor(abcs.LLMActor):
@@ -57,7 +57,7 @@ alright
         ]
 
     def send_base(self, text_data, ser_data):
-        self.history.append({"role": "user", "parts": text_data})
+        self.history.append({"role": "user", "parts": text_data+ser_data})
         response = self.model.generate_content(self.history)
         self.history.append(response.candidates[0].content)
         return response.candidates[0].content

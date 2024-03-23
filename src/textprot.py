@@ -77,7 +77,7 @@ class DummyActor(abcs.LLMActor):
 
 
 if __name__ == "__main__":
-    cenv = ConsoleEnv()
+    cenv = ConsoleEnv(maxlen=1000)
     prov = FileStorage("./dump.bin")
     proc = DummyProc()
     gact = actor.GeminiActor()
