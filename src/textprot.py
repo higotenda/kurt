@@ -4,7 +4,7 @@ A module to implement a CLI session to prototype..
 
 import abcs
 import pickle
-
+import actor
 
 class ConsoleEnv(abcs.TextEnv):
     def __init__(self, prompt=">", maxlen=100):
@@ -13,12 +13,16 @@ class ConsoleEnv(abcs.TextEnv):
         self.maxlen = maxlen
 
     def loop(self, prov, proc, llmac):
+        kurt_init = False
         while True:
             line = input(self.prompt)
             if line == "quit":
                 break
             elif line == "kurt":
                 print(abcs.kurt_eat(self, prov, proc, llmac))
+                kurt_init = True
+            elif line.startswith("kurtq") and kurt_init:
+                print(abcs.kurt_interrogate(line[len("kurtq "):], llmac))
             else:
                 self.inplist.append(line)
                 if len(self.inplist) > self.maxlen:
@@ -75,5 +79,5 @@ if __name__ == "__main__":
     cenv = ConsoleEnv()
     prov = FileStorage("./dump.bin")
     proc = DummyProc()
-    dact = DummyActor()
-    cenv.loop(prov, proc, dact)
+    gact = actor.GeminiActor()
+    cenv.loop(prov, proc, gact)

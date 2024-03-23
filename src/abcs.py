@@ -79,3 +79,7 @@ def kurt_eat(
                 print(f"Warning: Failed to cache result for link {link}")
         mm_data.append(ret)
     return actor.send_base(text, mm_data)
+
+
+def kurt_interrogate(question: str, actor: LLMActor) -> str:
+    return actor.send_prompt(question)
