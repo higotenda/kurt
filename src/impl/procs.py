@@ -14,6 +14,9 @@ import infer
 from PIL import Image
 import impl.kf_proc
 import concurrent.futures
+import logging
+
+logger = logging.getLogger(__name__)
 
 class ImgProc(abcs.MultimediaProc):
     """
@@ -24,6 +27,7 @@ class ImgProc(abcs.MultimediaProc):
         self.sys_prompt = "What is in this image? Describe it to a person who is blind."
         genai.configure(api_key=os.environ["API_KEY"])
         self.model = genai.GenerativeModel("gemini-pro-vision")
+        logger.info("ImgProc initialized")
 
     def raw(self, fp:str):
         img = Image.open(fp).convert("RGB")
@@ -33,6 +37,7 @@ class ImgProc(abcs.MultimediaProc):
         response = requests.get(url)
         img = Image.open(BytesIO(response.content)).convert("RGB")
         desc = ''.join(p.text for p in self.model.generate_content([self.sys_prompt, img]).candidates[0].content.parts)
+        logger.info("Web Image transcribed")
         return f"##<img url='{url}'>##{desc}##</img>##"
 
 
@@ -62,9 +67,8 @@ class YoutubeProcKF(abcs.MultimediaProc):
         #     ret += f'Keyframe {i}: {results[i]}'
         for i, kf in enumerate(os.listdir(chunk_dir)):
             if os.path.isfile(os.path.join(chunk_dir, kf)):
-                print(f"Processing {i}")
                 ret += f'Keyframe {i}: {ip.raw(f"{chunk_dir}/{kf}")}'
-    
+                logger.info(f"Processed frame {i}")
         return ret+'##</video>##'
 
 class WebpageProc(abcs.MultimediaProc):
@@ -73,7 +77,7 @@ class WebpageProc(abcs.MultimediaProc):
         html_content = response.text
         soup = BeautifulSoup(html_content, "html.parser")
         text = soup.get_text()
-        print(text)
+        logger.info("Website parsed")
         f"##<article>##{text}##</article>"
 
 
@@ -85,11 +89,11 @@ class ProcMux(abcs.MultimediaProc):
     def consume(self, url: str):
         response = requests.head(url)
         if response.status_code != 200:
+            logger.warn("Failed to load url. May have expired")
             return "##<generic>## The url failed to load ignore this and continue to look at chat##</generic>##"
         mime_type = response.headers.get("Content-Type")
 
         if mime_type.startswith("image/"):
-            print("found image")
             ip = ImgProc()
             return ip.consume(url)
         for l in re.findall(

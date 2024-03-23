@@ -59,7 +59,7 @@ async def on_message(message):
 
         messages = [m async for m in message.channel.history(limit=settings.SETTINGS['history_limit'])]
         messages = list(filter(lambda x: x.author != client.user, messages))
-        messages = list(map(lambda x: x.content, messages))[::-1]
+        messages = list(map(lambda x: f'{x.author.name} : {x.content}', messages))[::-1]
 
         await message.channel.send("Read all messages")
 

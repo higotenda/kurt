@@ -18,42 +18,42 @@ class GeminiActor(abcs.LLMActor):
                 "role": "model",
                 "parts": ["Understood."],
             },
-            {
-                "role": "user",
-                "parts": [
-                    """
-wazupsteve — Yesterday at 21:31
-morning when will u leave
-we can go same time""",
-                    """
-infinitasium — Yesterday at 21:31
-around 730
-720-740
-""",
-                    """
-wazupsteve — Yesterday at 21:31
-alright
-ill leave around 7.30-7.40
-ill either wait at majestic or mysore road?
-""",
-                    """
-infinitasium — Yesterday at 21:32
-sure
-wait at mysore road
-no point waiting at majestic
-""",
-                    """
-wazupsteve — Yesterday at 21:33
-alright
-""",
-                ],
-            },
-            {
-                "role": "model",
-                "parts": [
-                    "wazupsteve asks infinitasium when they'll be leaving. infinitasium says he'll leave around 730 and wazupsteve leaves at 730. They agree to meet at mysore road."
-                ],
-            },
+#             {
+#                 "role": "user",
+#                 "parts": [
+#                     """
+# wazupsteve — Yesterday at 21:31
+# morning when will u leave
+# we can go same time""",
+#                     """
+# infinitasium — Yesterday at 21:31
+# around 730
+# 720-740
+# """,
+#                     """
+# wazupsteve — Yesterday at 21:31
+# alright
+# ill leave around 7.30-7.40
+# ill either wait at majestic or mysore road?
+# """,
+#                     """
+# infinitasium — Yesterday at 21:32
+# sure
+# wait at mysore road
+# no point waiting at majestic
+# """,
+#                     """
+# wazupsteve — Yesterday at 21:33
+# alright
+# """,
+#                 ],
+#             },
+#             {
+#                 "role": "model",
+#                 "parts": [
+#                     "wazupsteve asks infinitasium when they'll be leaving. infinitasium says he'll leave around 730 and wazupsteve leaves at 730. They agree to meet at mysore road."
+#                 ],
+#             },
         ]
         self.history = self.history_default.copy()
 
