@@ -11,7 +11,7 @@ Serialized = JsonData
 class TextEnv(ABC):
     def __init__(self):
         pass
-
+      
     @abstractmethod
     def hist(*kwargs) -> tuple[list[str], list[Link]]:
         """Return a history of everything that's transpired in the chat. Kwargs can be used to supply additional arguments."""
@@ -78,12 +78,13 @@ def kurt_eat(
     mm_data = []
     for link in links:
         ret = prov.fetch(link)
-        ret = None
-        if ret is None:
+        ret = ""
+        if ret is None or "":
             ret = proc.consume(link)
             if not prov.write(link, ret):
                 print(f"Warning: Failed to cache result for link {link}")
         mm_data.append(ret)
+        mm_data = list(filter(lambda x: x is not None, mm_data))
     return actor.send_base(text, mm_data)
 
 
