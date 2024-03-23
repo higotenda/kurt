@@ -49,7 +49,10 @@ async def on_message(message):
         
         messages = [m async for m in message.channel.history(limit=1000)]
         messages = list(filter(lambda x: x.author!=client.user, messages))
-        messages = list(map(lambda x: x.content, messages))
+        messages = list(map(lambda x: x.content, messages))[::-1]
+
+        await message.channel.send("Read all messages")
+
         ctx = Context(messages)
         response = abcs.kurt_eat(ctx, settings.SETTINGS['Provider'], settings.SETTINGS["Processor"], settings.SETTINGS['LLM_Actor'])
         if len(response)>2000:
