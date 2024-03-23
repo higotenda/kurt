@@ -34,8 +34,8 @@ async def on_message(message):
     if message.content.startswith('$hello'):
         await message.channel.send('Hello!')
     if message.content.startswith('$summarize'):
-        print("Got prompt!")
-        messages = [m async for m in message.channel.history(limit=200)]
+        await message.channel.send("Got prompt!")
+        messages = [m async for m in message.channel.history(limit=1000)]
         messages = list(filter(lambda x: x.author!=client.user, messages))
         messages = list(map(lambda x: x.content, messages))
         response = abcs.kurt_eat(Context(messages), settings.PROVIDER_MAP["FileStorage"]('dump.bin'), settings.PROCESSOR_MAP["ProcMux"](), settings.LLM_ACTOR_MAP["GeminiActor"](GEMINI_KEY))
@@ -43,7 +43,8 @@ async def on_message(message):
     if message.content.startswith('$interrogate '):
         if len(message.content)<len('$interrogate ')+3:
             await message.channel.send("Question is too short!")
-        response = abcs.kurt_interrogate(Context(messages), settings.PROVIDER_MAP["FileStorage"]('dump.bin'), settings.PROCESSOR_MAP["ProcMux"](), settings.LLM_ACTOR_MAP["GeminiActor"](GEMINI_KEY))
+        await message.channel.send("Interrogating")
+        response = abcs.kurt_interrogate(message.content[len('$interrogate '):], settings.LLM_ACTOR_MAP["GeminiActor"](GEMINI_KEY))
         await message.channel.send(response)
 
 client.run(DISCORD_KEY)
