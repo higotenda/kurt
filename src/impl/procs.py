@@ -54,7 +54,6 @@ class ProcMux(abcs.MultimediaProc):
         response = requests.head(url)
         if response.status_code != 200:
             return '' #"##<generic>## The url failed to load ##</generic>##"
-
         mime_type = response.headers.get("Content-Type")
 
         if mime_type.startswith("image/"):

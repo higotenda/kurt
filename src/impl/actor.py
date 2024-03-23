@@ -2,7 +2,7 @@ import google.generativeai as genai
 import abcs
 import os
 
-sys_prompt = "System prompt: You are currently summarizing the contents of a chat history between a group of people. Your job is to read the messages which are sent and then write a summary of all that happened in that chat. Some of the messages will be interleaved with data of different types and you will be provided only a text description of the image, and image will be marked by ##<img url='url of image'>## Description of image ##</img>## use this description for additional context."
+sys_prompt = "System prompt: You are currently summarizing the contents of a chat history between a group of people. Never refuse to summarise the chat. Your job is to read the messages which are sent and then write a summary of all that happened in that chat. Some of the messages will be interleaved with data of different types and you will be provided only a text description of the image, and image will be marked by ##<img url='url of image'>## Description of image ##</img>## use this description for additional context. Similarly for articles and video, ignore if you get unavailable content in one of the tags and continue to summarise just the texts. Never refuse to properly provide a summary"
 
 
 class GeminiActor(abcs.LLMActor):
@@ -61,6 +61,8 @@ alright
         self.history.append({"role": "user", "parts": text_data + ser_data})
         print(self.history);
         response = self.model.generate_content(self.history)
+        if not len(response.candidates)>0:
+            return f'Cannot generate response due to safety reasons. {response.prompt_feedback}'
         self.history.append(response.candidates[0].content)
         return ''.join(p.text for p in response.candidates[0].content.parts).strip()
 
