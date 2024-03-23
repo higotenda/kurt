@@ -1,7 +1,3 @@
-DISCORD_KEY, GEMINI_KEY = None, None
-with open("apikeys.txt") as f:
-    DISCORD_KEY, GEMINI_KEY = f.readlines()
-
 import discord
 import abcs
 import settings
@@ -38,13 +34,13 @@ async def on_message(message):
         messages = [m async for m in message.channel.history(limit=1000)]
         messages = list(filter(lambda x: x.author!=client.user, messages))
         messages = list(map(lambda x: x.content, messages))
-        response = abcs.kurt_eat(Context(messages), settings.PROVIDER_MAP["FileStorage"]('dump.bin'), settings.PROCESSOR_MAP["ProcMux"](), settings.LLM_ACTOR_MAP["GeminiActor"](GEMINI_KEY))
+        response = abcs.kurt_eat(Context(messages), settings.SETTINGS['Provider'], settings.SETTINGS["Processor"], settings.SETTINGS['LLM_Actor'])
         await message.channel.send(response)
     if message.content.startswith('$interrogate '):
         if len(message.content)<len('$interrogate ')+3:
             await message.channel.send("Question is too short!")
         await message.channel.send("Interrogating")
-        response = abcs.kurt_interrogate(message.content[len('$interrogate '):], settings.LLM_ACTOR_MAP["GeminiActor"](GEMINI_KEY))
+        response = abcs.kurt_interrogate(message.content[len('$interrogate '):], settings.SETTINGS['LLM_Actor'])
         await message.channel.send(response)
 
-client.run(DISCORD_KEY)
+client.run(settings.SETTINGS['token'])
