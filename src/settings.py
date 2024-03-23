@@ -12,8 +12,8 @@ import json
 MongoProvider = None
 
 SETTINGS = None
-# with open("./config.json", "r") as fh:
-#     SETTINGS = json.load(fh)
+with open("./config.json", "r") as fh:
+    SETTINGS = json.load(fh)
 
 LLM_ACTOR_MAP = {"GeminiActor": GeminiActor, "DummyActor": DummyActor}
 
@@ -21,6 +21,6 @@ PROVIDER_MAP = {"MongoDB": MongoProvider, "FileStorage": FileStorage}
 
 PROCESSOR_MAP = {"DummyProc": DummyProc, "ProcMux": ProcMux}
 
-# SETTINGS["LLM_Actor"] = LLM_ACTOR_MAP[SETTINGS["LLM_Actor"]](SETTINGS["ACTARG"])
-# SETTINGS["Provider"] = PROVIDER_MAP[SETTINGS["Provider"]](SETTINGS["PRVARG"])
-# SETTINGS["Processor"] = PROCESSOR_MAP[SETTINGS["Processor"]]()
+SETTINGS["LLM_Actor"] = LLM_ACTOR_MAP[SETTINGS["LLM_Actor"]](SETTINGS["ACTARG"])
+SETTINGS["Provider"] = PROVIDER_MAP[SETTINGS["Provider"]](SETTINGS["PRVARG"])
+SETTINGS["Processor"] = PROCESSOR_MAP[SETTINGS["Processor"]]()
