@@ -22,35 +22,43 @@ def stripid_msg(msg, is_dm, split=False):
         first, _, last = last.partition(' ');
     return (first, last) if split else last;
 
+def stripid_msg(msg, is_dm, split=False):
+    first, _, last = msg.partition(" ")
+    if not is_dm:
+        first, _, last = last.partition(" ")
+    return (first, last) if split else last
+
+
 async def on_ready():
-  print("I have logged in as {0.user}".format(client))
+    print("I have logged in as {0.user}".format(client))
+
 
 async def on_message(message):
     if message.author == client.user:
         return
 
-    channel = message.channel;
-    is_dm = isinstance(message.channel, discord.channel.DMChannel);
-    command, trail = stripid_msg(message.content, is_dm, split=True);
+    channel = message.channel
+    is_dm = isinstance(message.channel, discord.channel.DMChannel)
+    command, trail = stripid_msg(message.content, is_dm, split=True)
 
-    if command == '/summary' or command == '/.':
+    if command == "/summary" or command == "/.":
 
-        texts = [];
+        texts = []
 
         if len(trail.strip()) == 0:
             async for message in channel.history(limit=GLOBAL_PREFS.history_limit):
                 if message.author == client.user:
-                    continue;
-                content = stripid_msg(message.content, is_dm);
-                if content.strip() == '':
-                    continue;   # Just filter blanks out.
-                texts.append(message.author.name + " : " + content);
-            await channel.send("Summarizing current: " + channel.name);
-            texts = texts[::-1];
+                    continue
+                content = stripid_msg(message.content, is_dm)
+                if content.strip() == "":
+                    continue
+                    # Just filter blanks out.
+                texts.append(message.author.name + " : " + content)
+            await channel.send("Summarizing current: " + channel.name)
+            texts = texts[::-1]
         else:
-            texts.append(trail);
-            await channel.send("Summarizing trail: " + trail);
-
+            texts.append(trail)
+            await channel.send("Summarizing trail: " + trail)
         eater = Eater(channel, texts, (SETTINGS['Provider'], GLOBAL_PREFS.Processor, GLOBAL_PREFS.LLM_Actor));
         await eater.do_it();
 
@@ -84,6 +92,6 @@ def make_client():
 
     global client
     client = discord.Client(intents=intents)
-    client.event(on_ready);
-    client.event(on_message);
-    return client;
+    client.event(on_ready)
+    client.event(on_message)
+    return client

@@ -6,8 +6,8 @@ from textprot import FileStorage, DummyActor, DummyProc
 from impl.procs import ProcMux
 from impl.mongoc import MongoProvider
 from impl.actor import GeminiActor
-from impl.procs import ProcMux
 from impl.redisc import RedisProvider
+from impl.procs import ProcMux
 import json
 
 LLM_ACTOR_MAP = {
