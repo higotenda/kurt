@@ -24,9 +24,9 @@ class ImgProc(abcs.MultimediaProc):
     Processor for image-type multi-media.
     """
 
-    def __init__(self) -> None:
+    def __init__(self, api_key) -> None:
         self.sys_prompt = "What is in this image? Describe it to a person who is blind."
-        genai.configure(api_key=os.environ["API_KEY"])
+        genai.configure(api_key=api_key)
         self.model = genai.GenerativeModel("gemini-pro-vision")
         logger.info("ImgProc initialized")
 
@@ -50,13 +50,17 @@ class YoutubeProcAction(abcs.MultimediaProc):
             f"{stost(i*5)}: {action}"
             for i, action in enumerate(infer.process_video(url))
         )
-        f"##<video url='{url}'>##{a}##</video>##"
+        return f"##<video url='{url}'>##{a}##</video>##";
 
 class YoutubeProcKF(abcs.MultimediaProc):
+
+    def __init__(self, key):
+        self.key = key;
+
     def consume(self, url: str):
         chunk_dir = "output"
         impl.kf_proc.download_url(url)
-        ip = ImgProc()
+        ip = ImgProc(key)
         ret = f"##<video url='{url}'##"
         # with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
         #     futures = {}
@@ -79,14 +83,16 @@ class WebpageProc(abcs.MultimediaProc):
         soup = BeautifulSoup(html_content, "html.parser")
         text = soup.get_text()
         logger.info("Website parsed")
-        f"##<article>##{text}##</article>"
+        return f"##<article>##{text}##</article>";
 
 
 class ProcMux(abcs.MultimediaProc):
+    def __init__(self, key):
+        self.api_key = key;
+
     """
     A processor that multiplexes other processors.
     """
-
     def consume(self, url: str):
         response = requests.head(url)
         if response.status_code != 200:
@@ -95,12 +101,12 @@ class ProcMux(abcs.MultimediaProc):
         mime_type = response.headers.get("Content-Type")
 
         if mime_type.startswith("image/"):
-            ip = ImgProc()
+            ip = ImgProc(self.api_key)
             return ip.consume(url)
         for l in re.findall(
             r"(?P<url>https?://www\.youtube\.com/watch\?v=[\w-]+)", url
         ):
-            yp = YoutubeProcKF()
+            yp = YoutubeProcKF(self.api_key)
             return yp.consume(l)
 
         # Default proc is web-page proc.

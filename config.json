@@ -1,4 +1,4 @@
 {
     "Provider": "Redis",
-    "PRVARG": "localhost:7777"
+    "PRVARG": "localhost:6379"
 }

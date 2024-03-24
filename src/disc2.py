@@ -24,11 +24,6 @@ async def on_ready():
     print(f"We have logged in as {client.user}")
 
 
-channels = {}
-
-
-channels = {}
-
 @client.event
 async def on_message(message):
 
@@ -57,7 +52,7 @@ async def on_message(message):
     if message.content.startswith("$summarize") or message.content.startswith("$s"):
         await message.channel.send("Got prompt!")
 
-        messages = [m async for m in message.channel.history(limit=settings.SETTINGS['history_limit'])]
+        messages = [m async for m in message.channel.history(limit=settings.GLOBAL_PREFS.history_limit)]
         messages = list(filter(lambda x: x.author != client.user, messages))
         messages = list(map(lambda x: f'{x.author.name} : {x.content}', messages))[::-1]
 
@@ -67,8 +62,8 @@ async def on_message(message):
         response = abcs.kurt_eat(
             ctx,
             settings.SETTINGS["Provider"],
-            settings.SETTINGS["Processor"],
-            settings.SETTINGS["LLM_Actor"],
+            settings.GLOBAL_PREFS.Processor,
+            settings.GLOBAL_PREFS.LLM_Actor,
         )
         if len(response) > 2000:
             n = response // 2000
@@ -83,10 +78,10 @@ async def on_message(message):
         abcs.kurt_eat(
             ctx,
             settings.SETTINGS["Provider"],
-            settings.SETTINGS["Processor"],
-            settings.SETTINGS["LLM_Actor"],
+            settings.GLOBAL_PREFS.Processor,
+            settings.GLOBAL_PREFS.LLM_Actor
         )
-        response = abcs.kurt_interrogate(q, settings.SETTINGS["LLM_Actor"])
+        response = abcs.kurt_interrogate(q, settings.GLOBAL_PREFS.LLM_Actor)
         await message.channel.send(response)
 
     if message.content.startswith("$interrogate "):
@@ -94,7 +89,7 @@ async def on_message(message):
             await message.channel.send("Question is too short!")
         await message.channel.send("Interrogating")
         response = abcs.kurt_interrogate(
-            message.content[len("$interrogate ") :], settings.SETTINGS["LLM_Actor"]
+            message.content[len("$interrogate ") :], settings.GLOBAL_PREFS.LLM_Actor
         )
         if len(response) > 2000:
             n = response // 2000
@@ -104,4 +99,4 @@ async def on_message(message):
             await message.channel.send(response)
 
 
-client.run(settings.SETTINGS["token"])
+client.run(settings.GLOBAL_PREFS.TOKEN)
