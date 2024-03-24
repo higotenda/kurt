@@ -11,13 +11,14 @@ import requests
 from io import BytesIO
 import re
 import infer
-from impl.ocr import ocr_string
+# from impl.ocr import ocr_string
 from PIL import Image
 import impl.kf_proc
 import concurrent.futures
 import logging
 
 logger = logging.getLogger(__name__)
+
 
 class ImgProc(abcs.MultimediaProc):
     """
@@ -30,16 +31,27 @@ class ImgProc(abcs.MultimediaProc):
         self.model = genai.GenerativeModel("gemini-pro-vision")
         logger.info("ImgProc initialized")
 
-    def raw(self, fp:str):
+    def raw(self, fp: str):
         img = Image.open(fp).convert("RGB")
-        return ''.join(p.text for p in self.model.generate_content([self.sys_prompt, img]).candidates[0].content.parts)
+        return "".join(
+            p.text
+            for p in self.model.generate_content([self.sys_prompt, img])
+            .candidates[0]
+            .content.parts
+        )
 
     def consume(self, url: str):
         response = requests.get(url)
-        img = Image.open(BytesIO(response.content)).convert('RGB')
-        a = ''.join(p.text for p in self.model.generate_content([self.sys_prompt, img]).candidates[0].content.parts);
-        ocr_output = ocr_string(img); print("ocr_output: ", ocr_output);
-        return f"##<img url='{url}'>##{a}##</img>## seemingly containing the text: \'{ocr_output}\'";
+        img = Image.open(BytesIO(response.content)).convert("RGB")
+        a = "".join(
+            p.text
+            for p in self.model.generate_content([self.sys_prompt, img])
+            .candidates[0]
+            .content.parts
+        )
+        # ocr_output = ocr_string(img)
+        # print("ocr_output: ", ocr_output)
+        return f"##<img url='{url}'>##{a}##</img>##"
 
 
 class YoutubeProcAction(abcs.MultimediaProc):
@@ -50,17 +62,18 @@ class YoutubeProcAction(abcs.MultimediaProc):
             f"{stost(i*5)}: {action}"
             for i, action in enumerate(infer.process_video(url))
         )
-        return f"##<video url='{url}'>##{a}##</video>##";
+        return f"##<video url='{url}'>##{a}##</video>##"
+
 
 class YoutubeProcKF(abcs.MultimediaProc):
 
     def __init__(self, key):
-        self.key = key;
+        self.key = key
 
     def consume(self, url: str):
         chunk_dir = "output"
         impl.kf_proc.download_url(url)
-        ip = ImgProc(key)
+        ip = ImgProc(self.key)
         ret = f"##<video url='{url}'##"
         # with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
         #     futures = {}
@@ -74,7 +87,8 @@ class YoutubeProcKF(abcs.MultimediaProc):
             if os.path.isfile(os.path.join(chunk_dir, kf)):
                 ret += f'Keyframe {i}: {ip.raw(f"{chunk_dir}/{kf}")}'
                 logger.info(f"Processed frame {i}")
-        return ret+'##</video>##'
+        return ret + "##</video>##"
+
 
 class WebpageProc(abcs.MultimediaProc):
     def consume(self, url: str):
@@ -83,16 +97,17 @@ class WebpageProc(abcs.MultimediaProc):
         soup = BeautifulSoup(html_content, "html.parser")
         text = soup.get_text()
         logger.info("Website parsed")
-        return f"##<article>##{text}##</article>";
+        return f"##<article>##{text}##</article>"
 
 
 class ProcMux(abcs.MultimediaProc):
     def __init__(self, key):
-        self.api_key = key;
+        self.api_key = key
 
     """
     A processor that multiplexes other processors.
     """
+
     def consume(self, url: str):
         response = requests.head(url)
         if response.status_code != 200:
