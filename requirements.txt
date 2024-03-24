@@ -1,0 +1,7 @@
+redis
+pymongo
+google-generativeai
+discord.py
+pytube
+bs4
+pillow
