@@ -1,9 +1,6 @@
-"""
-A module to connect to redis.
-"""
-
 import abcs
 import redis
+<<<<<<< HEAD
 
 class RedisProvider(abcs.DataProvider):
 	def __init__(self, host):

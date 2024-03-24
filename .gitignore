@@ -163,8 +163,7 @@ cython_debug/
 
 dump.bin
 
-test.py
-test.ipynb
+test*
 
 *.pth
 
@@ -174,3 +173,5 @@ apikeys.txt
 
 src/config.json
 config.json
+
+output/
