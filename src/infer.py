@@ -5,9 +5,9 @@ import download
 import os
 from typing import List
 
-config_file = "../i3d_imagenet-pretrained-r50_8xb8-32x2x1-100e_kinetics400-rgb.py"
-checkpoint_file = "../i3d_imagenet-pretrained-r50_8xb8-32x2x1-100e_kinetics400-rgb_20220812-e213c223.pth"
-label_file = "../label_map_k400.txt"
+config_file = "./i3d_imagenet-pretrained-r50_8xb8-32x2x1-100e_kinetics400-rgb.py"
+checkpoint_file = "./i3d_imagenet-pretrained-r50_8xb8-32x2x1-100e_kinetics400-rgb_20220812-e213c223.pth"
+label_file = "./label_map_k400.txt"
 device = "cuda:0" if torch.cuda.is_available() else "cpu"
 model = init_recognizer(config_file, checkpoint_file, device=device)
 labels = open(label_file).readlines()

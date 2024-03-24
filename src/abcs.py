@@ -87,9 +87,9 @@ def kurt_eat(
                 logger.warn(f"Processor returned empty for link {link}");
             try:
                 if not prov.write(link, ret):
-                    logger.warn(f"Failed to cache result for link {link}")
-            except:
-                print("Mongo is dead")
+                    logger.warn(f"Failed to cache result for link {link}");
+            except Error as e:
+                print("Data Provider has failed.\n\t" + e);
         mm_data.append(ret)
         mm_data = list(filter(lambda x: x is not None, mm_data))
     return actor.send_base(text, mm_data)
