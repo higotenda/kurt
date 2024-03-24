@@ -11,7 +11,7 @@ from threading import Thread
 import textprot
 import asyncio
 
-from settings import GLOBAL_PREFS, SETTINGS
+from prefs import GLOBAL_PREFS, SETTINGS
 
 DISCORD_BOT_TOKEN = GLOBAL_PREFS.TOKEN
 client = None

@@ -14,7 +14,7 @@ Serialized = JsonData
 class TextEnv(ABC):
     def __init__(self):
         pass
-      
+
     @abstractmethod
     def hist(*kwargs) -> tuple[list[str], list[Link]]:
         """Return a history of everything that's transpired in the chat. Kwargs can be used to supply additional arguments."""
@@ -83,13 +83,13 @@ def kurt_eat(
         ret = prov.fetch(link)
         if ret is None:
             ret = proc.consume(link)
-            if ret=='':
-                logger.warn(f"Processor returned empty for link {link}");
+            if ret == "":
+                logger.warn(f"Processor returned empty for link {link}")
             try:
                 if not prov.write(link, ret):
-                    logger.warn(f"Failed to cache result for link {link}");
-            except Error as e:
-                print("Data Provider has failed.\n\t" + e);
+                    logger.warn(f"Failed to cache result for link {link}")
+            except:
+                print("Data Provider has failed.\n\t")
         mm_data.append(ret)
         mm_data = list(filter(lambda x: x is not None, mm_data))
     return actor.send_base(text, mm_data)
