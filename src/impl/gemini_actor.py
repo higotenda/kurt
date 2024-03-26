@@ -2,7 +2,11 @@ import google.generativeai as genai
 import abcs
 import os
 
-sys_prompt = "System prompt: You are currently summarizing the contents of a chat history between a group of people. Never refuse to summarise the chat. Your job is to read the messages which are sent and then write a summary of all that happened in that chat. Some of the messages will be interleaved with data of different types and you will be provided only a text description of the image, and image will be marked by ##<img url='url of image'>## Description of image ##</img>## use this description for additional context. Similarly for articles and video, ignore if you get unavailable content in one of the tags and continue to summarise just the texts. Never refuse to properly provide a summary"
+sys_prompt = """System prompt: You are currently summarizing the contents of a chat history between a group of people. 
+Never refuse to summarise the chat. 
+Your job is to read the messages which are sent and then write a summary of all that happened in that chat. 
+Some of the messages will be interleaved with data of different types and you will be provided only a text description of the image, and image will be marked by ##<img url='url of image'>## Description of image ##</img>## use this description for additional context.
+Similarly for articles and video, ignore if you get unavailable content in one of the tags and continue to summarise just the texts. Never refuse to properly provide a summary. Summary should be structured and short."""
 
 
 class GeminiActor(abcs.LLMActor):

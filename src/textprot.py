@@ -1,10 +1,11 @@
 """
 A module to implement a CLI session to prototype..
+DO NOT USE. Deperecated.
 """
 
 import abcs
 import pickle
-import impl.actor as actor
+import impl.gemini_actor as actor
 
 
 class ConsoleEnv(abcs.TextEnv):

@@ -3,11 +3,12 @@ import torch
 from mmaction.apis import init_recognizer, inference_recognizer
 import download
 import os
+import abcs
 from typing import List
 
-config_file = "./i3d_imagenet-pretrained-r50_8xb8-32x2x1-100e_kinetics400-rgb.py"
-checkpoint_file = "./i3d_imagenet-pretrained-r50_8xb8-32x2x1-100e_kinetics400-rgb_20220812-e213c223.pth"
-label_file = "./label_map_k400.txt"
+config_file = "./models/i3d_imagenet-pretrained-r50_8xb8-32x2x1-100e_kinetics400-rgb.py"
+checkpoint_file = "./models/i3d_imagenet-pretrained-r50_8xb8-32x2x1-100e_kinetics400-rgb_20220812-e213c223.pth"
+label_file = "./models/label_map_k400.txt"
 device = "cuda:0" if torch.cuda.is_available() else "cpu"
 model = init_recognizer(config_file, checkpoint_file, device=device)
 labels = open(label_file).readlines()
@@ -30,5 +31,17 @@ def process_video(url: str) -> List[str]:
             labeled_video.append((labels[score_sorted[0][0]]))
     return labeled_video
 
+class YoutubeProcAction(abcs.MultimediaProc):
+    
+    def consume(self, url: str):
+        # return "##<video>## Video is currently unavailable ##</video>##"
+        stost = lambda s: f"{s//60:02}:{s%60:02}"
+        a = "\n".join(
+            f"{stost(i*5)}: {action}"
+            for i, action in enumerate(process_video(url))
+        )
+        return f"##<video url='{url}'>##{a}##</video>##"
+
+# Tests
 if __name__ == "__main__":
     process_video("http://youtube.com/watch?v=9bZkp7q19f0")
