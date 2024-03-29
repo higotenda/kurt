@@ -5,8 +5,11 @@ from procs.mux_proc import LProcMux
 from provs.redisc import RedisProvider
 import sys
 import os
+import logging
 
 from textprot import FileStorage
+
+logging.basicConfig(level=logging.NOTSET)
 
 if __name__ == "__main__":
 	if len(sys.argv) == 2:

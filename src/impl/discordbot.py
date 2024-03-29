@@ -13,7 +13,7 @@ intents.message_content = True
 client = discord.Client(intents=intents)
 
 logger = logging.getLogger(__name__);
-logger.setLevel('DEBUG');
+
 DISCORD_RESPONSE_LIMIT = 2000;
 
 GLOBAL_PREFS = None;
@@ -28,6 +28,8 @@ def stripid_msg(msg, is_dm, split=False):
     return (first, last) if split else last
 
 async def send_response(channel, response):
+    if response is None:
+        return;
     for idx in range(0, len(response), DISCORD_RESPONSE_LIMIT):
         await channel.send(response[idx: idx + DISCORD_RESPONSE_LIMIT]);
 
@@ -87,8 +89,11 @@ async def on_message(message):
     elif command == '/interrogate' or command == '/q':
         await channel.send(f"Q: {trail} Thinking..");
         response = abcs.kurt_interrogate(trail, GLOBAL_PREFS.LLM_Actor);
-    else:
+        
+    elif is_dm:
         response = "I am not programmed to respond in that area.";
+    else:
+        response = None;
 
     await send_response(channel, response);
 

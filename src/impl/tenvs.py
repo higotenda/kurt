@@ -8,7 +8,7 @@ class ListEnv(TextEnv):
     def __init__(self, ls: list[str]):
         self.iters = ls;
         
-    def hist(self, *kwargs):
+    def hist(self):
         links = [];
         for line in self.iters:
             links.extend(regex_url(line));
@@ -31,7 +31,7 @@ class LinesEnv(TextEnv):
         self.texts.append(line);
         self.links.extend(regex_url(line));
 
-    def hist(self, *kwargs):
+    def hist(self):
         if self.reverse:
             self.texts.reverse();
             self.links.reverse();

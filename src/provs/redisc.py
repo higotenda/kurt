@@ -12,7 +12,8 @@ class RedisProvider(abcs.DataProvider):
 		return bool(self.r.set(media_id, data));
 
 	def fetch(self, media_id: str):
-		return abcs.Serialized(str(self.r.get(media_id)));
+		r = self.r.get(media_id);
+		return abcs.Serialized(str(r)) if r is not None else r;
 
 	def terminate(self):
 		self.r.close()

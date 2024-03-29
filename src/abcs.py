@@ -4,6 +4,7 @@ import re
 import logging
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG);
 
 Link = NewType("Link", str)
 Serialized = NewType("Serialized", str)
@@ -17,7 +18,7 @@ class TextEnv(ABC):
         pass
 
     @abstractmethod
-    def hist(self, *kwargs) -> tuple[list[str], list[Link]]:
+    def hist(self) -> tuple[list[str], list[Link]]:
         """Return a history of everything that's transpired in the chat. Kwargs can be used to supply additional arguments."""
         pass
 
@@ -27,8 +28,8 @@ class DataProvider(ABC):
         pass
 
     @abstractmethod
-    def fetch(self, media_id: str) -> Serialized | None:
-        """Check if required resource already is cached in the database."""
+    def fetch(self, media_id: str) -> Optional[Serialized]:
+        """Check if required resource already is cached in the database. Return None otherwise."""
         pass
 
     @abstractmethod
@@ -107,8 +108,9 @@ def kurt_eat(
                     logger.warn(f"Failed to cache result for link {link}, but did not error.")
             except Exception as e:
                 logger.error("Data Provider has failed.\n\tcause: " + str(e));
-            
-            processed.append(ret)
+        else:
+            logger.info(f"Found link in provider. data: {ret}");    
+        processed.append(ret)
 
     logger.info("Sending base data to actor..");
     return actor.send_base(text, processed)

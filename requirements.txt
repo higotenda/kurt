@@ -5,3 +5,5 @@ discord.py
 pytube
 bs4
 pillow
+imaplib
+getpass

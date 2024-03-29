@@ -176,3 +176,5 @@ src/config.json
 
 output/
 src.zip
+client_secret.json
+oauth2.py
